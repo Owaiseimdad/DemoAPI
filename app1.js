@@ -2,6 +2,7 @@ const { raw } = require("express");
 const request = require("express");
 const express = request();
 const filereader = require("fs");
+const Joi = require("joi"); // downloading JOI for post request Input Validation. Extra information at https://www.npmjs.com/package/joi
 
 express.use(request.json());
 
@@ -45,6 +46,17 @@ express.get("/api/fact/:country/:parameters", function (req, res) {
 
 // POst request which consists of the posting something on the body part of the post request. Use postman to implement this.
 express.post("/api/courses", (req, res) => {
+  const schema = {
+    name: Joi.string().min(3).required(),
+  };
+
+  const result = Joi.validate(req.body, schema);
+  console.log(result);
+
+  if (result.error) {
+    res.status(400).send("Enter a valid input");
+  }
+
   const course = {
     id: courses.length + 1,
     name: req.body.name,
