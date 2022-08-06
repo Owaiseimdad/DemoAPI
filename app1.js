@@ -3,8 +3,12 @@ const request = require("express");
 const express = request();
 const filereader = require("fs");
 
+express.use(request.json());
+
 let rawdata = filereader.readFileSync("countries.json");
 let countries = JSON.parse(rawdata);
+
+let courses = [{ id: 1, name: "CKH (Oracle)" }];
 
 // let india = countries["India"];
 // console.log(Object.values(india));
@@ -30,11 +34,23 @@ express.get("/api/fact/:country/", function (req, res) {
 
 express.get("/api/fact/:country/:parameters", function (req, res) {
   //res.send(req.query); // reading query parameters. Query provides additional information to the backend.
-  if (Object.keys(countries).includes(req.params.country)) {
+  if (
+    Object.keys(countries[req.params.country]).includes(req.params.parameters)
+  ) {
     res.send(countries[req.params.country][req.params.parameters]);
   } else {
     res.status(404).send("the given parameter was not found");
   }
+});
+
+// POst request which consists of the posting something on the body part of the post request. Use postman to implement this.
+express.post("/api/courses", (req, res) => {
+  const course = {
+    id: courses.length + 1,
+    name: req.body.name,
+  };
+  courses.push(course);
+  res.send(course);
 });
 
 // PORT
